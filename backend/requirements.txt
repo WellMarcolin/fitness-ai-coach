@@ -1,0 +1,17 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic-settings==2.5.2
+httpx==0.27.2
+py-intervalsicu==0.1.4
+python-telegram-bot==21.6
+plotly==5.24.1
+kaleido==0.2.1
+pandas==2.2.2
+numpy==2.0.1
+openai==1.51.0
+sqlalchemy==2.0.35
+aiosqlite==0.20.0
+alembic==1.13.2
+python-multipart==0.0.9
+python-dotenv==1.0.1
+structlog==24.4.0
