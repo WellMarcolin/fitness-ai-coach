@@ -65,7 +65,13 @@ class FitnessAgent(ABC):
         return json.dumps(data, indent=2, default=str)
 
     async def get_fitness_data(self, days: int = 90) -> str:
-        data = await self.intervals.get_fitness(days=days)
+        from datetime import timedelta
+        newest = date.today()
+        oldest = newest - timedelta(days=days)
+        data = await self.intervals.get_activities(
+            oldest=oldest, newest=newest,
+            fields="id,name,start_date_local,icu_training_load,icu_atl,icu_ctl,icu_tsb"
+        )
         import json
         return json.dumps(data, indent=2, default=str)
 

@@ -158,18 +158,6 @@ async def get_workouts():
         await client.close()
 
 
-@router.get("/fitness")
-async def get_fitness(days: int = Query(90, ge=7, le=365)):
-    client = await get_client()
-    try:
-        data = await client.get_fitness(days=days)
-        return data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        await client.close()
-
-
 @router.get("/sport-settings")
 async def get_sport_settings():
     client = await get_client()

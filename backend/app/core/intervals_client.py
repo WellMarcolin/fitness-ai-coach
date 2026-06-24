@@ -143,11 +143,4 @@ class IntervalsClient:
         r.raise_for_status()
         return r.json()
 
-    # === Fitness (CTL/ATL/TSB) ===
-    async def get_fitness(self, days: int = 90) -> dict:
-        r = await self.client.get(
-            f"/athlete/{self.athlete_id}/fitness",
-            params={"days": days},
-        )
-        r.raise_for_status()
-        return r.json()
+
