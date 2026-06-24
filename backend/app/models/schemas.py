@@ -8,7 +8,6 @@ AgentType = Literal["personal_trainer", "nutritionist", "metabolism"]
 
 
 class AgentPromptConfig(BaseModel):
-    agent_type: AgentType
     system_prompt: str
 
 
@@ -66,7 +65,6 @@ class LLMProviderSettings(BaseModel):
 
 # === Chat / Agent Requests ===
 class AgentChatRequest(BaseModel):
-    agent_type: AgentType
     message: str
     include_charts: bool = False
 
@@ -78,12 +76,10 @@ class AgentChatResponse(BaseModel):
 
 
 class AgentAnalyzeRequest(BaseModel):
-    agent_type: AgentType
     days: int = 7
 
 
 class AgentGenerateRequest(BaseModel):
-    agent_type: AgentType
     goal: str = ""
     context: str = ""
 
