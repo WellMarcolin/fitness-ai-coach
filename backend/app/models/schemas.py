@@ -58,7 +58,7 @@ class WellnessRecord(BaseModel):
 
 # === LLM Provider Settings ===
 class LLMProviderSettings(BaseModel):
-    provider: Literal["deepseek", "glm", "groq", "ollama"]
+    provider: Literal["deepseek", "glm", "groq", "ollama", "openrouter", "opencode"]
     api_key: Optional[str] = None
     model: Optional[str] = None
     base_url: Optional[str] = None

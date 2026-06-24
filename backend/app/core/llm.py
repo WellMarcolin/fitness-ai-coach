@@ -29,5 +29,11 @@ def get_llm_provider(provider_name: Optional[str] = None) -> LLMProvider:
     elif name == "ollama":
         from app.core.llm_providers.ollama import OllamaProvider
         return OllamaProvider()
+    elif name == "openrouter":
+        from app.core.llm_providers.openrouter import OpenRouterProvider
+        return OpenRouterProvider()
+    elif name == "opencode":
+        from app.core.llm_providers.opencode import OpenCodeProvider
+        return OpenCodeProvider()
     else:
         raise ValueError(f"Unknown LLM provider: {name}")

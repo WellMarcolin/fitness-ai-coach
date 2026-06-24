@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import Literal
+from typing import Optional, Literal
 import os
 
 
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     intervals_api_key: str = ""
 
     # LLM Provider
-    llm_provider: Literal["deepseek", "glm", "groq", "ollama"] = "deepseek"
+    llm_provider: Literal["deepseek", "glm", "groq", "ollama", "openrouter", "opencode"] = "deepseek"
 
     # DeepSeek
     deepseek_api_key: str = ""
@@ -31,6 +31,15 @@ class Settings(BaseSettings):
     # Ollama
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3"
+
+    # OpenRouter
+    openrouter_api_key: str = ""
+    openrouter_model: str = "deepseek/deepseek-chat"
+
+    # OpenCode
+    opencode_api_key: str = ""
+    opencode_base_url: str = "https://api.opencode.ai/v1"
+    opencode_model: str = "deepseek-chat"
 
     # Telegram
     telegram_bot_token: str = ""

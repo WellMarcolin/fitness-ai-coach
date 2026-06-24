@@ -11,6 +11,8 @@ export default function ApiConfig() {
     deepseekApiKey: '',
     glmApiKey: '',
     groqApiKey: '',
+    openrouterApiKey: '',
+    opencodeApiKey: '',
     telegramBotToken: '',
   })
 
@@ -113,6 +115,8 @@ export default function ApiConfig() {
               <option value="glm">GLM (Zhipu)</option>
               <option value="groq">Groq</option>
               <option value="ollama">Ollama (Local)</option>
+              <option value="openrouter">OpenRouter</option>
+              <option value="opencode">OpenCode API</option>
             </select>
           </div>
           {config.llmProvider !== 'ollama' && (
@@ -127,13 +131,17 @@ export default function ApiConfig() {
                 value={
                   config.llmProvider === 'deepseek' ? config.deepseekApiKey :
                   config.llmProvider === 'glm' ? config.glmApiKey :
-                  config.groqApiKey
+                  config.llmProvider === 'groq' ? config.groqApiKey :
+                  config.llmProvider === 'openrouter' ? config.openrouterApiKey :
+                  config.opencodeApiKey
                 }
                 onChange={(e) => {
                   const key = e.target.value
                   if (config.llmProvider === 'deepseek') setConfig({ ...config, deepseekApiKey: key })
                   else if (config.llmProvider === 'glm') setConfig({ ...config, glmApiKey: key })
-                  else setConfig({ ...config, groqApiKey: key })
+                  else if (config.llmProvider === 'groq') setConfig({ ...config, groqApiKey: key })
+                  else if (config.llmProvider === 'openrouter') setConfig({ ...config, openrouterApiKey: key })
+                  else setConfig({ ...config, opencodeApiKey: key })
                 }}
               />
             </div>
