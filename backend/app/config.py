@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from typing import Optional, Literal
 import os
+from dotenv import load_dotenv
 
 
 class Settings(BaseSettings):
@@ -50,6 +51,12 @@ class Settings(BaseSettings):
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
+
+# Load .env from multiple possible locations
+for _env_path in [".env", "../.env", os.path.join(os.path.dirname(__file__), "..", "..", ".env")]:
+    if os.path.isfile(_env_path):
+        load_dotenv(_env_path)
+        break
 
 settings = Settings()
 

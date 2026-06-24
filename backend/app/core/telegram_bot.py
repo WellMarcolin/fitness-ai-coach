@@ -229,8 +229,19 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.error(f"Update {update} caused error {context.error}")
 
 
-def create_application() -> Application:
-    app = Application.builder().token(settings.telegram_bot_token).build()
+_application: Optional[Application] = None
+
+
+def get_application() -> Application:
+    global _application
+    if _application is not None:
+        return _application
+
+    token = settings.telegram_bot_token
+    if not token or token == "your_telegram_bot_token":
+        raise ValueError("Telegram bot token not configured")
+
+    app = Application.builder().token(token).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
@@ -243,7 +254,5 @@ def create_application() -> Application:
     app.add_handler(CommandHandler("config", config))
     app.add_error_handler(error_handler)
 
+    _application = app
     return app
-
-
-application = create_application()

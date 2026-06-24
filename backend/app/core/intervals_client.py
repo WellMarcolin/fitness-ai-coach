@@ -7,18 +7,15 @@ from app.config import settings
 BASE_URL = "https://intervals.icu/api/v1"
 
 
-def _auth_headers() -> dict:
-    return {
-        "Authorization": f"ApiKey {settings.intervals_athlete_id}:{settings.intervals_api_key}",
-        "Content-Type": "application/json",
-    }
-
-
 class IntervalsClient:
     def __init__(self):
         self.athlete_id = settings.intervals_athlete_id
-        self.headers = _auth_headers()
-        self.client = httpx.AsyncClient(base_url=BASE_URL, headers=self.headers, timeout=30)
+        self.client = httpx.AsyncClient(
+            base_url=BASE_URL,
+            auth=("API_KEY", settings.intervals_api_key),
+            headers={"Content-Type": "application/json"},
+            timeout=30,
+        )
 
     async def close(self):
         await self.client.aclose()
