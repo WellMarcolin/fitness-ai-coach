@@ -29,11 +29,20 @@ logger = logging.getLogger(__name__)
 user_agents: dict = {}
 
 
+async def safe_reply(update: Update, text: str, markdown: bool = False):
+    if markdown:
+        try:
+            return await update.message.reply_text(text, parse_mode="Markdown")
+        except Exception:
+            pass
+    await update.message.reply_text(text)
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🏋️ **Fitness AI Coach**\n\n"
+        "Fitness AI Coach\n\n"
         "Eu sou seu assistente pessoal de treinamento, nutrição e metabolismo.\n\n"
-        "**Comandos disponíveis:**\n"
+        "COMANDOS DISPONIVEIS:\n"
         "/insights - Análise geral dos últimos 7 dias\n"
         "/treino - Gerar treino para hoje\n"
         "/nutricao - Sugestão nutricional\n"
@@ -44,82 +53,68 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/agente nutritionist <msg> - Falar com Nutricionista\n"
         "/agente metabolism <msg> - Falar com Especialista em Metabolismo\n"
         "/config - Link para o dashboard web\n\n"
-        "Use /help para mais informações.",
-        parse_mode="Markdown",
+        "Use /help para mais informacoes."
     )
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "**Ajuda - Fitness AI Coach**\n\n"
-        "Este bot conecta ao **intervals.icu** para acessar seus dados de treino, "
-        "frequência cardíaca, sono, peso e composição corporal.\n\n"
-        "**Agentes disponíveis:**\n"
-        "• **Personal Trainer** - Análise de carga, planos de treino, periodização\n"
-        "• **Nutricionista** - Macros, planejamento alimentar, timing nutricional\n"
-        "• **Metabolismo** - HRV, recuperação, zonas metabólicas\n\n"
-        "**Exemplos:**\n"
-        "/insights - Resumo dos últimos 7 dias\n"
+        "Ajuda - Fitness AI Coach\n\n"
+        "Este bot conecta ao intervals.icu para acessar seus dados de treino, "
+        "frequencia cardiaca, sono, peso e composicao corporal.\n\n"
+        "Agentes disponiveis:\n"
+        "Personal Trainer - Analise de carga, planos de treino, periodizacao\n"
+        "Nutricionista - Macros, planejamento alimentar, timing nutricional\n"
+        "Metabolismo - HRV, recuperacao, zonas metabolicas\n\n"
+        "Exemplos:\n"
+        "/insights - Resumo dos ultimos 7 dias\n"
         "/treino - Treino recomendado para hoje\n"
         "/agente nutritionist \"O que comer antes de um pedal de 3h?\"\n\n"
         "Precisa configurar algo? Acesse o dashboard: "
-        f"{settings.cors_origins.split(',')[0]}/settings",
-        parse_mode="Markdown",
+        f"{settings.cors_origins.split(',')[0]}/settings"
     )
 
 
 async def insights(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Analisando seus dados dos últimos 7 dias... ⏳")
+    await update.message.reply_text("Analisando seus dados dos ultimos 7 dias...")
     try:
         agent = PersonalTrainerAgent()
         analysis = await agent.analyze(days=7)
         await agent.cleanup()
-        await update.message.reply_text(
-            f"**📊 Análise dos Últimos 7 Dias**\n\n{analysis}",
-            parse_mode="Markdown",
-        )
+        await safe_reply(update, f"ANALISE DOS ULTIMOS 7 DIAS\n\n{analysis}", markdown=False)
     except Exception as e:
         await update.message.reply_text(f"Erro ao analisar dados: {str(e)}")
 
 
 async def workout(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Gerando treino para hoje... ⏳")
+    await update.message.reply_text("Gerando treino para hoje...")
     try:
         agent = PersonalTrainerAgent()
         plan = await agent.suggest_weekly_plan()
         await agent.cleanup()
-        await update.message.reply_text(
-            f"**🏋️ Plano de Treino**\n\n{plan}",
-            parse_mode="Markdown",
-        )
+        await safe_reply(update, f"PLANO DE TREINO\n\n{plan}", markdown=False)
     except Exception as e:
         await update.message.reply_text(f"Erro ao gerar treino: {str(e)}")
 
 
 async def nutrition(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Analisando dados nutricionais... ⏳")
+    await update.message.reply_text("Analisando dados nutricionais...")
     try:
         agent = NutritionistAgent()
         analysis = await agent.analyze(days=7)
         await agent.cleanup()
-        await update.message.reply_text(
-            f"**🥗 Recomendações Nutricionais**\n\n{analysis}",
-            parse_mode="Markdown",
-        )
+        await safe_reply(update, f"RECOMENDACOES NUTRICIONAIS\n\n{analysis}", markdown=False)
     except Exception as e:
         await update.message.reply_text(f"Erro: {str(e)}")
 
 
 async def recovery(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Calculando score de recuperação... ⏳")
+    await update.message.reply_text("Calculando score de recuperacao...")
     try:
         agent = MetabolismAgent()
         score = await agent.recovery_score()
         await agent.cleanup()
-        await update.message.reply_text(
-            f"**🔄 Análise de Recuperação**\n\n{score}",
-            parse_mode="Markdown",
-        )
+        await safe_reply(update, f"ANALISE DE RECUPERACAO\n\n{score}", markdown=False)
     except Exception as e:
         await update.message.reply_text(f"Erro: {str(e)}")
 
@@ -144,7 +139,7 @@ async def chart_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 img_bytes = base64.b64decode(chart["image_base64"])
                 await update.message.reply_photo(
                     photo=InputFile(io.BytesIO(img_bytes), filename="training_load.png"),
-                    caption="📈 Carga de Treino - Últimos 90 dias",
+                    caption="Carga de Treino - Ultimos 90 dias",
                 )
             else:
                 await update.message.reply_text("Sem dados suficientes para gerar o gráfico.")
@@ -163,7 +158,7 @@ async def chart_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 img_bytes = base64.b64decode(chart["image_base64"])
                 await update.message.reply_photo(
                     photo=InputFile(io.BytesIO(img_bytes), filename="body_comp.png"),
-                    caption="📊 Composição Corporal - Últimos 90 dias",
+                    caption="Composicao Corporal - Ultimos 90 dias",
                 )
             else:
                 await update.message.reply_text("Sem dados suficientes.")
@@ -183,7 +178,7 @@ async def agent_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "Use: /agente <tipo> <mensagem>\n"
             "Tipos: personal_trainer, nutritionist, metabolism\n"
-            "Exemplo: /agente personal_trainer Como está minha carga de treino?"
+            "Exemplo: /agente personal_trainer Como esta minha carga de treino?"
         )
         return
 
@@ -193,20 +188,17 @@ async def agent_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     valid_types = {"personal_trainer", "nutritionist", "metabolism"}
     if agent_type not in valid_types:
         await update.message.reply_text(
-            f"Tipo inválido. Use: {', '.join(valid_types)}"
+            f"Tipo invalido. Use: {', '.join(valid_types)}"
         )
         return
 
-    await update.message.reply_text(f"Consultando {agent_type}... ⏳")
+    await update.message.reply_text(f"Consultando {agent_type}...")
     try:
         from app.api.agents import _get_agent
         agent = _get_agent(agent_type)
         response = await agent.chat(message)
         await agent.cleanup()
-        await update.message.reply_text(
-            f"**{agent_type.replace('_', ' ').title()}**\n\n{response}",
-            parse_mode="Markdown",
-        )
+        await safe_reply(update, f"{agent_type.replace('_', ' ').title()}\n\n{response}", markdown=False)
     except Exception as e:
         await update.message.reply_text(f"Erro: {str(e)}")
 

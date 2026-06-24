@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
@@ -16,6 +16,15 @@ export default function ApiConfig() {
     telegramBotToken: '',
   })
 
+  useEffect(() => {
+    fetch(`${API_URL}/settings`)
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.llmProvider) setConfig(data)
+      })
+      .catch(() => {})
+  }, [])
+
   const handleSave = async () => {
     try {
       const res = await fetch(`${API_URL}/settings`, {
@@ -29,7 +38,7 @@ export default function ApiConfig() {
         toast.error('Erro ao salvar')
       }
     } catch {
-      toast.success('Configurações salvas localmente')
+      toast.error('Erro de conexão com o servidor')
     }
   }
 
