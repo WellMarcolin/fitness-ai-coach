@@ -52,11 +52,15 @@ class Settings(BaseSettings):
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 
-# Load .env from multiple possible locations
-for _env_path in [".env", "../.env", os.path.join(os.path.dirname(__file__), "..", "..", ".env")]:
-    if os.path.isfile(_env_path):
-        load_dotenv(_env_path)
-        break
+def _find_env():
+    for p in [".env", "../.env", os.path.join(os.path.dirname(__file__), "..", "..", ".env")]:
+        if os.path.isfile(p):
+            return p
+    return None
+
+_env_path = _find_env()
+if _env_path:
+    load_dotenv(_env_path)
 
 settings = Settings()
 
@@ -64,3 +68,11 @@ settings = Settings()
 _db_url = os.environ.get("DATABASE_URL")
 if _db_url:
     settings.database_url = _db_url
+
+
+def reload_settings():
+    global settings
+    settings = Settings()
+    _db_url = os.environ.get("DATABASE_URL")
+    if _db_url:
+        settings.database_url = _db_url
